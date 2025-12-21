@@ -1,8 +1,8 @@
-# app.py - FIXED FOR RENDER DEPLOYMENT
+# app.py - FIXED FOR RENDER + SQLALCHEMY
 import os
 from flask import Flask, redirect, url_for
-from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -10,13 +10,15 @@ login_manager = LoginManager()
 def create_app():
     app = Flask(__name__)
     
-    # PRODUCTION CONFIG - Render Environment Variables
-    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "change-this-in-production")
+    # Config
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-key")
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///algo_users.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     
-    # Initialize extensions
+    # CRITICAL: Init SQLAlchemy FIRST
     db.init_app(app)
+    
+    # Login manager
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"
     
@@ -25,27 +27,26 @@ def create_app():
         from models import User
         return User.query.get(int(user_id))
     
-    # Blueprints (safe imports)
+    # Create tables BEFORE blueprints
+    with app.app_context():
+        db.create_all()
+    
+    # Blueprints (AFTER db.init_app)
     from auth_routes import auth_bp
-    from dashboard_routes import dash_bp  
+    from dashboard_routes import dash_bp
     from broker_routes import broker_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(dash_bp)
     app.register_blueprint(broker_bp)
     
-    # Routes
     @app.route('/')
     def index():
         return redirect(url_for('auth.login'))
     
     @app.route('/health')
     def health():
-        return {'status': 'healthy', 'service': 'AlgoSphere'}, 200
-    
-    # Create tables
-    with app.app_context():
-        db.create_all()
+        return {'status': 'healthy'}, 200
     
     return app
 
