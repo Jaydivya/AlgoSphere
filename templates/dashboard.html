@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AlgoSphere – Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <style>
+        :root {
+            --bg-main: #050816;
+            --bg-sidebar: #050816;
+            --bg-header: linear-gradient(90deg,#312e81,#1d4ed8,#22c55e);
+            --bg-card: #070c1a;
+            --bg-card-soft: #050818;
+            --accent: #22c55e;
+            --accent-soft: rgba(34,197,94,.14);
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-subtle: rgba(148,163,184,.3);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+            background: radial-gradient(circle at top,#111827 0,#020617 55%,#000 100%);
+            color: var(--text-main);
+        }
+
+        a { text-decoration: none; }
+
+        .layout { display: flex; min-height: 100vh; }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid #020617;
+            padding: 1rem 0 1.25rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            padding: 0 1.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 20% 0,#22c55e,#0ea5e9,#6366f1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1rem;
+            color: #020617;
+            box-shadow: 0 0 18px rgba(59,130,246,.6);
+        }
+
+        .brand-title { font-size: 1.05rem; font-weight: 700; }
+        .brand-sub   { font-size: .78rem; color: var(--text-muted); }
+
+        .sidebar-section-title {
+            padding: .35rem 1.5rem;
+            font-size: .72rem;
+            text-transform: uppercase;
+            letter-spacing: .14em;
+            color: var(--text-muted);
+        }
+
+        .sidebar-link {
+            padding: .55rem 1.5rem;
+            font-size: .9rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            border-left: 3px solid transparent;
+        }
+        .sidebar-link i { font-size: 1rem; }
+        .sidebar-link:hover {
+            background: radial-gradient(circle at left,#111827 0,#020617 65%);
+            color: var(--text-main);
+        }
+        .sidebar-link.active {
+            background: linear-gradient(90deg,rgba(59,130,246,.18),rgba(34,197,94,.16));
+            color: var(--text-main);
+            border-left-color: var(--accent);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1rem 1.5rem 0;
+            font-size: .8rem;
+            color: var(--text-muted);
+            border-top: 1px solid #020617;
+        }
+
+        /* MAIN */
+        .main { flex: 1; display: flex; flex-direction: column; }
+
+        .topbar {
+            padding: .85rem 1.75rem;
+            background-image: var(--bg-header);
+            background-size: 220% 220%;
+            border-bottom: 1px solid #020617;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 18px 40px rgba(15,23,42,.85);
+        }
+
+        .topbar-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+        .topbar-title i { font-size: 1.2rem; }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .btn-chip {
+            font-size: .78rem;
+            border-radius: 999px;
+            padding: .25rem .9rem;
+        }
+
+        .avatar-pill {
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 15% 0,#22c55e,#0ea5e9,#6366f1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .9rem;
+            font-weight: 700;
+        }
+
+        .content { padding: 1.5rem 1.75rem 2rem; }
+
+        .card-dark {
+            background-color: var(--bg-card);
+            border-radius: .9rem;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .card-soft {
+            background-color: var(--bg-card-soft);
+            border-radius: .9rem;
+            border: 1px solid rgba(30,64,175,.7);
+        }
+
+        .stat-label {
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: .14em;
+            color: var(--text-muted);
+        }
+
+        .stat-value-lg {
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+
+        .pill {
+            padding: .18rem .75rem;
+            border-radius: 999px;
+            font-size: .72rem;
+        }
+        .pill-success {
+            background-color: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .index-title {
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: .14em;
+            color: var(--text-muted);
+        }
+
+        .index-price {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .muted { color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">AS</div>
+            <div>
+                <div class="brand-title">AlgoSphere</div>
+                <div class="brand-sub">Algo Trading · NIFTY · BANKNIFTY</div>
+            </div>
+        </div>
+
+        <div>
+            <div class="sidebar-section-title">Overview</div>
+            <a class="sidebar-link active" href="{{ url_for('dash.dashboard') }}">
+                <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+            </a>
+            <a class="sidebar-link" href="#my-bots">
+                <i class="bi bi-cpu"></i> <span>My Bots</span>
+            </a>
+        </div>
+
+        <div>
+            <div class="sidebar-section-title">Reports</div>
+            <a class="sidebar-link" href="{{ url_for('dash.reports') }}">
+                <i class="bi bi-calendar-day"></i> <span>Daily Report</span>
+            </a>
+            <a class="sidebar-link" href="{{ url_for('dash.reports', period='weekly') }}">
+                <i class="bi bi-calendar-week"></i> <span>Weekly Report</span>
+            </a>
+            <a class="sidebar-link" href="{{ url_for('dash.reports', period='monthly') }}">
+                <i class="bi bi-calendar3"></i> <span>Monthly Report</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="d-flex align-items-center justify-content-between">
+                <span>Pro Plan</span>
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger btn-sm rounded-pill">Logout</a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-title">
+                <i class="bi bi-graph-up-arrow"></i>
+                <span>AlgoSphere Dashboard</span>
+            </div>
+            <div class="topbar-right">
+                {% if is_broker_connected %}
+                    <span class="btn btn-sm btn-chip btn-outline-success bg-opacity-25">
+                        <i class="bi bi-broadcast-pin me-1"></i> Live Broker
+                    </span>
+                    <form method="POST" action="{{ url_for('broker.enable_paper') }}" class="d-inline">
+                        <button class="btn btn-sm btn-chip btn-outline-warning text-warning" type="submit">
+                            <i class="bi bi-journal-text me-1"></i> Switch to Paper
+                        </button>
+                    </form>
+                {% elif is_paper %}
+                    <span class="btn btn-sm btn-chip btn-warning text-dark">
+                        <i class="bi bi-journal-text me-1"></i> Paper Mode
+                    </span>
+                    <button class="btn btn-sm btn-chip btn-success"
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#connectModal">
+                        <i class="bi bi-plug-fill me-1"></i> Connect Live
+                    </button>
+                {% else %}
+                    <span class="btn btn-sm btn-chip btn-secondary">
+                        <i class="bi bi-exclamation-triangle me-1"></i> No Broker
+                    </span>
+                    <button class="btn btn-sm btn-chip btn-success"
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#connectModal">
+                        <i class="bi bi-plug-fill me-1"></i> Connect
+                    </button>
+                {% endif %}
+
+                <div class="d-flex align-items-center gap-2 ms-3">
+                    <div class="text-end">
+                        <div style="font-size:.82rem;">
+                            {{ profile.accountName if profile and profile.accountName else current_user.email }}
+                        </div>
+                        <div class="muted" style="font-size:.7rem;">
+                            {{ 'Live' if is_broker_connected else 'Paper / Demo' }}
+                        </div>
+                    </div>
+                    <div class="avatar-pill">
+                        {{ (profile.accountName if profile and profile.accountName else current_user.email)[0]|upper }}
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <main class="content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, msg in messages %}
+                  <div class="alert alert-{{ category }} mb-3">
+                    {{ msg }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <!-- TOP STRIP -->
+            <div class="row g-3 mb-3">
+                <div class="col-lg-4">
+                    <div class="card-dark p-3 h-100">
+                        <div class="stat-label mb-1">Net Balance</div>
+                        <div class="stat-value-lg text-info">
+                            ₹{{ "%.2f"|format(balance[0].net) }}
+                        </div>
+                        <div class="muted small">
+                            Cash: ₹{{ "%.2f"|format(balance[0].cashmarginavailable) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card-dark p-3 h-100">
+                        <div class="stat-label mb-1">Today P&L</div>
+                        <div class="stat-value-lg text-success">₹0.00</div>
+                        <span class="pill pill-success">
+                            {{ 'LIVE' if is_broker_connected else 'PAPER / DEMO' }}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card-dark p-3 h-100">
+                        <div class="stat-label mb-1">Active Bots</div>
+                        <div class="stat-value-lg">
+                            {{ 1 if banknifty_orb_enabled else 0 }}
+                        </div>
+                        <div class="muted small">
+                            Manage in “My Bots” section.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MID ROW: INDICES + ACTIVITY -->
+            <div class="row g-3 mb-4">
+                <div class="col-lg-8">
+                    <div class="card-soft p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="stat-label">Index Overview</div>
+                            <span class="muted small">Spot values at last refresh</span>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="card-dark p-3 h-100">
+                                    <div class="index-title mb-1">NIFTY 50</div>
+                                    <div class="index-price text-info">
+                                        {{ "%.2f"|format(nifty_ltp) }}
+                                    </div>
+                                    <div class="muted small mt-1">NSE index</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card-dark p-3 h-100">
+                                    <div class="index-title mb-1">NIFTY BANK</div>
+                                    <div class="index-price text-success">
+                                        {{ "%.2f"|format(banknifty_ltp) }}
+                                    </div>
+                                    <div class="muted small mt-1">NSE index</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card-soft p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="stat-label">Recent Activity</div>
+                            <span class="pill pill-success">
+                                {{ 'LIVE' if is_broker_connected else 'DEMO' }}
+                            </span>
+                        </div>
+                        <ul class="list-unstyled mb-0 small muted">
+                            <li class="mb-2">• Broker: {{ 'Connected (Live)' if is_broker_connected else 'Paper / Not Connected' }}</li>
+                            <li class="mb-2">• BankNIFTY ORB: {{ 'Enabled' if banknifty_orb_enabled else 'Disabled' }}</li>
+                            <li class="mb-2">• Next trades between 09:20–10:00 IST.</li>
+                            <li>• Check Reports for P&L breakdown.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EQUITY CURVE -->
+            <div class="card-soft p-3 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="stat-label">Total Growth (Equity Curve)</div>
+                    <span class="muted small">Cumulative P&L from your recent trades</span>
+                </div>
+                <div style="height:260px;">
+                    <canvas id="equityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- MY BOTS -->
+            <hr class="border-secondary mb-3" id="my-bots">
+            <div class="card-soft p-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="stat-label">My Bots</div>
+                    <span class="muted small">Configure and deploy strategies</span>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card-dark p-3 h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <div class="fw-semibold">BankNIFTY ORB VWAP</div>
+                                    <div class="muted small">
+                                        09:15–10:00 · CE/PE ATM · ORB + VWAP + Volume
+                                    </div>
+                                </div>
+                                <form method="POST"
+                                      action="{{ url_for('dash.deploy_banknifty_orb') }}"
+                                      class="d-flex align-items-center gap-2">
+                                    <input type="number"
+                                           name="lots"
+                                           min="1" max="10"
+                                           value="{{ banknifty_orb_lots }}"
+                                           class="form-control form-control-sm"
+                                           style="width: 72px;" required>
+                                    <button class="btn btn-sm {{ 'btn-success' if banknifty_orb_enabled else 'btn-outline-success' }}"
+                                            type="submit">
+                                        {{ 'UPDATE' if banknifty_orb_enabled else 'DEPLOY' }}
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="mt-2 small">
+                                <span class="pill pill-success">Intraday</span>
+                                <span class="muted ms-2">
+                                    Lots: {{ banknifty_orb_lots }}
+                                    · Target: {{ banknifty_orb_target }} pts/lot
+                                    · SL: {{ banknifty_orb_stop }} pts/lot
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card-dark p-3 h-100">
+                            <div class="fw-semibold mb-1">More Bots Coming</div>
+                            <div class="muted small">
+                                Nifty ORB, Intraday MA, Hedge & Hedge – plug them into the same UI later.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- CONNECT BROKER MODAL -->
+<div class="modal fade" id="connectModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" method="POST" action="{{ url_for('broker.connect') }}">
+      <div class="modal-header">
+        <h5 class="modal-title">Connect Alice Blue (Live)</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-warning small">
+          <strong>Live trading:</strong> real orders will be placed if your bots are enabled.
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Client ID</label>
+          <input name="client_id" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">API Key</label>
+          <input name="api_key" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Trading Password</label>
+          <input type="password" name="password" class="form-control" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-success">Connect</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const equityLabels = {{ equity_labels|tojson }};
+    const equityValues = {{ equity_values|tojson }};
+
+    const ctx = document.getElementById('equityChart').getContext('2d');
+    const equityChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: equityLabels,
+            datasets: [{
+                label: 'Cumulative P&L (₹)',
+                data: equityValues,
+                borderColor: '#22c55e',
+                backgroundColor: 'rgba(34,197,94,0.12)',
+                borderWidth: 2,
+                tension: 0.25,
+                fill: true,
+                pointRadius: 2,
+                pointBackgroundColor: '#22c55e'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { labels: { color: '#e5e7eb', font: { size: 11 } } }
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#9ca3af', maxRotation: 0, autoSkip: true },
+                    grid: { display: false }
+                },
+                y: {
+                    ticks: { color: '#9ca3af' },
+                    grid: { color: 'rgba(31,41,55,0.6)' }
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>
