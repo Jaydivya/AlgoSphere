@@ -1,197 +1,114 @@
-{% extends "base_dark.html" %}
-{% block title %}AlgoSphere – Dashboard{% endblock %}
+{% extends "base.html" %}
+{% block title %}Dashboard - AlgoSphere{% endblock %}
 
 {% block content %}
-
-<!-- Top summary cards -->
+<!-- Top 4 statistic cards (light boxes) -->
 <div class="container-fluid pt-4 px-4">
     <div class="row g-4">
+        <!-- Net Balance -->
         <div class="col-sm-6 col-xl-3">
-            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                 <i class="fa fa-wallet fa-3x text-primary"></i>
-                <div class="ms-3">
-                    <p class="mb-2">Net Balance</p>
-                    <h6 class="mb-0">₹{{ "%.2f"|format(balance[0].net) }}</h6>
-                    <small class="text-muted">
-                        Cash: ₹{{ "%.2f"|format(balance[0].cashmarginavailable) }}
-                    </small>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-sm-6 col-xl-3">
-            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-rupee-sign fa-3x text-primary"></i>
-                <div class="ms-3">
-                    <p class="mb-2">Today P&L</p>
-                    <h6 class="mb-0"
-                        style="color: {{ '#22c55e' if (today_closed_pnl if today_closed_pnl is defined else 0.0) >= 0 else '#ef4444' }};">
-                        ₹{{ "%.2f"|format(today_closed_pnl if today_closed_pnl is defined else 0.0) }}
+                <div class="ms-3 text-end">
+                    <p class="mb-2 text-muted">Net Balance</p>
+                    <h6 class="{% if balance[0].net >= 0 %}text-success{% else %}text-danger{% endif %} mb-0">
+                        ₹{{ "%.0f"|format(balance[0].net) }}
                     </h6>
-                    <small class="text-muted">
-                        Mode: {{ 'LIVE' if is_broker_connected else 'PAPER / DEMO' }}
-                    </small>
                 </div>
             </div>
         </div>
 
+        <!-- Available Margin -->
         <div class="col-sm-6 col-xl-3">
-            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-credit-card fa-3x text-primary"></i>
+                <div class="ms-3 text-end">
+                    <p class="mb-2 text-muted">Available Margin</p>
+                    <h6 class="{% if balance[0].cashmarginavailable >= 0 %}text-success{% else %}text-danger{% endif %} mb-0">
+                        ₹{{ "%.0f"|format(balance[0].cashmarginavailable) }}
+                    </h6>
+                </div>
+            </div>
+        </div>
+
+        <!-- NIFTY -->
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                 <i class="fa fa-chart-line fa-3x text-primary"></i>
-                <div class="ms-3">
-                    <p class="mb-2">Open P&L</p>
-                    <h6 class="mb-0">
-                        ₹{{ "%.2f"|format(today_open_pnl if today_open_pnl is defined else 0.0) }}
-                    </h6>
-                    <small class="text-muted">
-                        Win rate (20 trades):
-                        {{ "%.0f"|format(today_win_rate if today_win_rate is defined else 0) }}%
-                    </small>
+                <div class="ms-3 text-end">
+                    <p class="mb-2 text-muted">NIFTY</p>
+                    <h6 class="mb-0">{{ "%.2f"|format(nifty_ltp) }}</h6>
                 </div>
             </div>
         </div>
 
+        <!-- BANKNIFTY -->
         <div class="col-sm-6 col-xl-3">
-            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-robot fa-3x text-primary"></i>
-                <div class="ms-3">
-                    <p class="mb-2">Active Bots</p>
-                    <h6 class="mb-0">{{ 1 if banknifty_orb_enabled else 0 }}</h6>
-                    <small class="text-muted">
-                        BankNIFTY ORB: {{ 'Enabled' if banknifty_orb_enabled else 'Disabled' }}
-                    </small>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Index overview -->
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-sm-12 col-xl-6">
-            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                <div>
-                    <p class="mb-2">NIFTY 50</p>
-                    <h6 class="mb-0">₹{{ "%.2f"|format(nifty_ltp) }}</h6>
-                    <small class="text-muted">NSE index · last refresh</small>
-                </div>
-                <i class="fa fa-chart-area fa-3x text-primary"></i>
-            </div>
-        </div>
-        <div class="col-sm-12 col-xl-6">
-            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                <div>
-                    <p class="mb-2">NIFTY BANK</p>
-                    <h6 class="mb-0">₹{{ "%.2f"|format(banknifty_ltp) }}</h6>
-                    <small class="text-muted">NSE index · last refresh</small>
-                </div>
+            <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                 <i class="fa fa-chart-bar fa-3x text-primary"></i>
+                <div class="ms-3 text-end">
+                    <p class="mb-2 text-muted">BANKNIFTY</p>
+                    <h6 class="mb-0">{{ "%.2f"|format(banknifty_ltp) }}</h6>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Activity + Notes -->
+<!-- Broker Connection strip -->
 <div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-sm-12 col-lg-6">
-            <div class="bg-secondary rounded p-4">
-                <h6 class="mb-4">Recent Activity</h6>
-                <ul class="mb-0">
-                    <li>Mode: {{ 'LIVE' if is_broker_connected else 'DEMO' }}</li>
-                    <li>Broker: {{ 'Connected (Live)' if is_broker_connected else 'Paper / Not Connected' }}</li>
-                    <li>BankNIFTY ORB: {{ 'Enabled' if banknifty_orb_enabled else 'Disabled' }}</li>
-                    <li>Next trades between 09:20–10:00 IST.</li>
-                </ul>
-            </div>
+    <div class="bg-light rounded p-4 d-flex flex-column flex-md-row justify-content-between align-items-center">
+        <div class="mb-3 mb-md-0">
+            <h5 class="mb-2">Broker Connection</h5>
+            {% if is_broker_connected %}
+                <span class="text-success">
+                    <i class="fa fa-circle me-1"></i>Connected to AliceBlue
+                </span>
+            {% else %}
+                <span class="text-danger">
+                    <i class="fa fa-circle me-1"></i>Not connected
+                </span>
+            {% endif %}
         </div>
-        <div class="col-sm-12 col-lg-6">
-            <div class="bg-secondary rounded p-4">
-                <h6 class="mb-4">Session Notes</h6>
-                <p class="mb-0">
-                    Use this space for risk notes, broker margin status, or intraday plan.
+        <div>
+            {% if is_broker_connected %}
+            <form method="POST" action="{{ url_for('disconnect_broker') }}" class="d-inline">
+                <button type="submit" class="btn btn-outline-primary">Disconnect</button>
+            </form>
+            {% else %}
+            <a href="{{ url_for('connect_broker') }}" class="btn btn-primary">Connect Broker</a>
+            {% endif %}
+            <a href="{{ url_for('strategies') }}" class="btn btn-primary ms-2">
+                <i class="fa fa-robot me-2"></i>Manage Strategies
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity & Today's Summary -->
+<div class="container-fluid pt-4 px-4 pb-4">
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-8">
+            <div class="bg-light rounded p-4">
+                <h6 class="mb-3">Recent Activity</h6>
+                <p class="mb-0 text-muted">
+                    No trades yet. Deploy strategies to start automated trading.
                 </p>
             </div>
         </div>
-    </div>
-</div>
-
-<!-- Weekly PnL + ORB settings -->
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-sm-12 col-lg-6">
-            <div class="bg-secondary rounded p-4">
-                <h6 class="mb-4">Total Growth (Weekly P&L)</h6>
-                <ul class="mb-0">
-                    {% if weekly_pnl is defined and weekly_pnl %}
-                        {% for d in weekly_pnl %}
-                        <li>{{ d.day }}: ₹{{ "%.0f"|format(d.pnl) }}</li>
-                        {% endfor %}
-                    {% else %}
-                        <li>Mon: ₹0 · Tue: ₹0 · Wed: ₹0 · Thu: ₹0 · Fri: ₹0</li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-        <div class="col-sm-12 col-lg-6">
-            <div class="bg-secondary rounded p-4">
-                <h6 class="mb-4">BankNIFTY ORB · VWAP</h6>
-                <p class="text-muted mb-2">09:15–10:00 · CE/PE ATM · ORB + VWAP + Volume</p>
-                <p class="mb-1">Lots: <strong>{{ banknifty_orb_lots }}</strong></p>
-                <p class="mb-1">Target: <strong>{{ banknifty_orb_target }} pts/lot</strong></p>
-                <p class="mb-1">SL: <strong>{{ banknifty_orb_stop }} pts/lot</strong></p>
-                <p class="mb-0 text-muted">Currently paper only.</p>
+        <div class="col-sm-12 col-xl-4">
+            <div class="bg-light rounded p-4">
+                <h6 class="mb-3">Today's Summary</h6>
+                <p class="mb-1 text-muted">
+                    P&L:
+                    <span class="{% if today_pnl >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        ₹{{ "%.0f"|format(today_pnl) }}
+                    </span>
+                </p>
+                <p class="mb-1 text-muted">Win Rate: {{ "%.1f"|format(win_rate) }}%</p>
+                <p class="mb-0 text-muted">Total Trades: {{ total_trades }}</p>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Recent trades table -->
-<div class="container-fluid pt-4 px-4 mb-4">
-    <div class="bg-secondary rounded p-4">
-        <div class="d-flex align-items-center justify-content-between mb-4">
-            <h6 class="mb-0">
-                Recent Trades
-                <small class="text-muted">
-                    · Last {{ recent_trades|length if recent_trades is defined else 0 }} executions
-                </small>
-            </h6>
-        </div>
-
-        {% if recent_trades is defined and recent_trades %}
-        <div class="table-responsive">
-            <table class="table text-start align-middle table-bordered table-hover mb-0">
-                <thead>
-                <tr class="text-white">
-                    <th scope="col">Time</th>
-                    <th scope="col">Symbol</th>
-                    <th scope="col">Side</th>
-                    <th scope="col">Qty</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">P&L</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for t in recent_trades %}
-                <tr>
-                    <td>{{ t.time }}</td>
-                    <td>{{ t.symbol }}</td>
-                    <td>{{ t.side }}</td>
-                    <td>{{ t.qty }}</td>
-                    <td>₹{{ "%.2f"|format(t.price) }}</td>
-                    <td style="color: {{ '#22c55e' if t.pnl >= 0 else '#ef4444' }};">
-                        ₹{{ "%.2f"|format(t.pnl) }}
-                    </td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% else %}
-        <p class="mb-0 text-muted">No trades yet. First executions will show here.</p>
-        {% endif %}
-    </div>
-</div>
-
 {% endblock %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Strategies - AlgoSphere{% endblock %}
+
+{% block content %}
+<div class="container-fluid pt-4 px-4">
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h3 class="mb-1">Trading Strategies</h3>
+                <p class="text-muted mb-0">Deploy, pause and monitor your automated setups</p>
+            </div>
+            <a href="{{ url_for('connect_broker') }}" class="btn btn-primary">
+                <i class="fa fa-plug me-2"></i>Broker Settings
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for strategy in strategies %}
+        <div class="col-xl-4 col-lg-6">
+            <div class="bg-light rounded p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="mb-1">{{ strategy.name }}</h5>
+                        <small class="text-muted">{{ strategy.symbol }}</small>
+                    </div>
+                    <span class="badge {% if strategy.enabled %}bg-success{% else %}bg-secondary{% endif %} px-3 py-2">
+                        {% if strategy.enabled %}Live{% else %}Paused{% endif %}
+                    </span>
+                </div>
+
+                {% if strategy.description %}
+                <p class="text-muted small mb-3">
+                    {{ strategy.description }}
+                </p>
+                {% endif %}
+
+                <div class="row g-3 mb-3">
+                    <div class="col-6">
+                        <small class="text-muted d-block mb-1">Lots</small>
+                        <div class="fw-semibold">{{ strategy.lots }}</div>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted d-block mb-1">Direction</small>
+                        <div class="fw-semibold text-uppercase">{{ strategy.direction or 'Both' }}</div>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted d-block mb-1">Target (₹)</small>
+                        <div class="fw-semibold text-success">
+                            {{ "%.0f"|format(strategy.target) }}
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted d-block mb-1">Stop Loss (₹)</small>
+                        <div class="fw-semibold text-danger">
+                            {{ "%.0f"|format(strategy.stop_loss) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <form method="POST" action="{{ url_for('deploy_strategy', strategy_id=strategy.id) }}" class="m-0">
+                        <button type="submit"
+                                class="btn {% if strategy.enabled %}btn-outline-danger{% else %}btn-primary{% endif %}">
+                            {% if strategy.enabled %}
+                                <i class="fa fa-pause me-2"></i>Pause
+                            {% else %}
+                                <i class="fa fa-play me-2"></i>Deploy
+                            {% endif %}
+                        </button>
+                    </form>
+                    {% if strategy.enabled %}
+                    <small class="text-success">
+                        <i class="fa fa-circle me-1"></i>Listening for signals
+                    </small>
+                    {% else %}
+                    <small class="text-muted">Not running</small>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="bg-light rounded p-5 text-center">
+                <i class="fa fa-robot text-primary mb-3" style="font-size: 3rem;"></i>
+                <h4 class="mb-2">No Strategies Found</h4>
+                <p class="text-muted mb-0">
+                    Connect your broker and add strategies to start automated trading.
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

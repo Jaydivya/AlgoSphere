@@ -1,0 +1,17 @@
+/* Make secondary background light like DASHMIN cards */
+.bg-secondary {
+    background-color: #f5f9ff !important;  /* light bluish card */
+}
+
+/* Make the text on those cards darker for contrast */
+.bg-secondary p,
+.bg-secondary h5,
+.bg-secondary h6,
+.bg-secondary span {
+    color: #212529 !important;
+}
+
+/* Keep subtle grey for section strips if needed */
+.broker-strip {
+    background-color: #f5f9ff !important;
+}
