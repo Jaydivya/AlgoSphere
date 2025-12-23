@@ -1,29 +1,25 @@
-from alice_blue import AliceBlue
+# alice_client.py
+from pya3 import Aliceblue
 
-# ====== CONFIG: define constants BEFORE get_alice() ======
-ALICE_USER_ID = "896533"
-ALICE_PASSWORD = "Jaydivya@123"
-ALICE_2FA = "1983"
+# Read your credentials from safe files / env
+USERNAME = open('username.txt').read().strip()
+API_KEY  = open('api_key.txt').read().strip()
 
-ALICE_APP_ID = "zykfqZhl0jXPfnN"  # short App Code
-ALICE_API_SECRET = (
-    "eHLpuCqonLMkmCIgIqNTJtDOREINxSBCEIMQiKJvpjCvvmZqbzqKkyZFcLCTJOdFcIZYBlDOJVGcAcyzrxjMLTnCjMmCYCrkhoYI"
-)  # long Secret Key
+alice = Aliceblue(user_id=USERNAME, api_key=API_KEY)
 
-_alice = None
+# Get and cache session id (do this once per process start)
+sid = alice.get_session_id()
+print("AliceBlue session:", sid["sessionID"])
 
-def get_alice() -> AliceBlue:
-    global _alice
-    if _alice is not None:
-        return _alice
+def get_index_ltp():
+    """Return (nifty_ltp, banknifty_ltp) as floats."""
+    # Ensure index contracts are downloaded at least once
+    # alice.get_contract_master("INDICES")  # heavy; call manually when needed
 
-    session_id = AliceBlue.login_and_get_sessionID(
-        username=ALICE_USER_ID,
-        password=ALICE_PASSWORD,
-        twoFA=ALICE_2FA,
-        app_id=ALICE_APP_ID,
-        api_secret=ALICE_API_SECRET,
-    )
+    nifty_inst = alice.get_instrument_by_symbol("INDICES", "NIFTY 50")
+    bank_inst  = alice.get_instrument_by_symbol("INDICES", "NIFTY BANK")
 
-    _alice = AliceBlue(username=ALICE_USER_ID, session_id=session_id)
-    return _alice
+    nifty_q = alice.get_scrip_info(nifty_inst)
+    bank_q  = alice.get_scrip_info(bank_inst)
+
+    return float(nifty_q["Ltp"]), float(bank_q["Ltp"])
