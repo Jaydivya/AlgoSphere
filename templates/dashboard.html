@@ -39,7 +39,7 @@
       --bg-sidebar: #ffffff;
       --bg-card: #ffffff;
       --bg-card-soft: #ffffff;
-      --border-subtle: rgba(15,23,42,0.08);
+      --border-subtle: rgba(34,197,94,0.35);  /* LIVE-style border */
       --text-main: #0f172a;
       --text-soft: #6b7280;
       --accent-green: #16a34a;
@@ -47,7 +47,7 @@
       --accent-blue: #1d4ed8;
       --accent-amber: #d97706;
       --accent-sky: #0284c7;
-      --chip-bg: rgba(22,163,74,0.08);
+      --chip-bg: rgba(34,197,94,0.08);        /* LIVE-style background */
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -132,10 +132,10 @@
     }
 
     [data-theme="light"] .nav-link.active {
-      box-shadow: 0 0 0 1px rgba(15,23,42,0.04);
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.10);
       background: linear-gradient(
         90deg,
-        rgba(34,197,94,0.08),
+        rgba(34,197,94,0.10),
         rgba(56,189,248,0.06)
       );
     }
@@ -239,8 +239,8 @@
       background: var(--bg-card);
       border-radius: 16px;
       border: 1px solid var(--border-subtle);
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.08);
       padding: 14px 14px 12px;
-      box-shadow: 0 10px 25px rgba(15,23,42,0.25);
       display:flex; flex-direction:column; gap:8px; min-height:84px;
     }
 
@@ -278,8 +278,9 @@
     .card-soft {
       border-radius:14px;
       border:1px dashed var(--border-subtle);
-      padding:10px 12px;
       background: var(--bg-card-soft);
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.05);
+      padding:10px 12px;
       display:flex; flex-direction:column; gap:6px;
     }
 
@@ -328,8 +329,9 @@
     .chart-card {
       border-radius: 14px;
       border: 1px dashed var(--border-subtle);
-      padding: 10px 12px;
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.06);
       background: var(--bg-card-soft);
+      padding: 10px 12px;
       display: flex;
       flex-direction: column;
       gap: 10px;

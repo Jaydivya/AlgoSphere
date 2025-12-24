@@ -18,9 +18,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "your-secret-key"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
 db = SQLAlchemy(app)
-
 
 # ---------- MODELS ----------
 
@@ -97,6 +95,7 @@ def get_fund_balance():
 def get_today_pnl(mode: str) -> float:
     """Sum today's closed trades PnL."""
     today = date.today()
+
     if mode == "PAPER":
         trades = PaperTrade.query.filter(
             db.func.date(PaperTrade.trade_date) == today,
@@ -107,6 +106,7 @@ def get_today_pnl(mode: str) -> float:
             db.func.date(LiveTrade.trade_date) == today,
             LiveTrade.exit_price.isnot(None),
         ).all()
+
     return sum(t.pnl_rupees for t in trades)
 
 
@@ -129,13 +129,14 @@ def login():
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
-
         user = User.query.filter_by(email=email).first()
+
         if user and check_password_hash(user.password, password):
             session["user_id"] = user.id
             return redirect(url_for("dashboard"))
 
         flash("Invalid credentials", "error")
+
     return render_template("login.html")
 
 
@@ -179,6 +180,7 @@ def toggle_broker():
 def toggle_mode():
     """Switch between PAPER and LIVE (manual override)."""
     global trade_mode
+
     if "user_id" not in session:
         return redirect(url_for("login"))
 
@@ -203,8 +205,10 @@ def deploy_paper_orb():
         pnl_rupees=2850.0,
         status="CLOSED",
     )
+
     db.session.add(trade)
     db.session.commit()
+
     flash("Paper ORB deployed, +₹2850 P&L", "success")
     return redirect(url_for("dashboard"))
 
@@ -218,12 +222,27 @@ def dashboard():
 
     funds = get_fund_balance()
     nifty_ltp, banknifty_ltp = get_index_ltp()
-
     today_pnl_paper = get_today_pnl("PAPER")
     today_pnl_live = get_today_pnl("LIVE")
 
-    paper_trades = PaperTrade.query.order_by(PaperTrade.id.desc()).limit(20).all()
-    live_trades = LiveTrade.query.order_by(LiveTrade.id.desc()).limit(20).all()
+    today = date.today()
+
+    # ONLY today’s trades for the “Recent” sections
+    paper_trades = (
+        PaperTrade.query
+        .filter(db.func.date(PaperTrade.trade_date) == today)
+        .order_by(PaperTrade.id.desc())
+        .limit(20)
+        .all()
+    )
+
+    live_trades = (
+        LiveTrade.query
+        .filter(db.func.date(LiveTrade.trade_date) == today)
+        .order_by(LiveTrade.id.desc())
+        .limit(20)
+        .all()
+    )
 
     return render_template(
         "dashboard.html",
@@ -242,6 +261,7 @@ def dashboard():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
+
         # Seed default admin user if not present
         if not User.query.filter_by(email="admin@test.com").first():
             user = User(
